@@ -1,32 +1,27 @@
 # Connects to remote dotfiles repo
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
+
 # Aliases and exports
 export PATH=/usr/local/bin:/usr/local/sbin:$PATH
 export MYVIMRC="~/.vimrc"
 alias k="knowledge_repo"
 export KNOWLEDGE_REPO=~/workspace/science
 alias w="curl wttr.in"
+alias jl='jupyter lab'
 
 
 # Suppress bash deprecation warning
 # https://www.loekvandenouweland.com/content/the-default-interactive-shell-is-now-zsh.html
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
+
 # Bash auto-completion
 # https://sourabhbajaj.com/mac-setup/BashCompletion/
-[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+# [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 # Autojump
 # https://github.com/wting/autojump
 [ -f $(brew --prefix)/etc/profile.d/autojump.sh ] && . $(brew --prefix)/etc/profile.d/autojump.sh
-
-
-# Command line prompt formatting
-# https://thucnc.medium.com/how-to-show-current-git-branch-with-colors-in-bash-prompt-380d05a24745
-# parse_git_branch() {
-#     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
-# }
-# export PS1="\[\e[32m\]\w \[\e[91m\]\$(parse_git_branch)\[\e[00m\] ∆ "
 
 # Set the default editor to vim.
 export EDITOR=vim
@@ -40,23 +35,20 @@ HISTSIZE=10000000
 HISTCONTROL=ignoreboth
 HISTIGNORE='ls:bg:fg:history'
 
+
 # Append commands to the bash command history file (~/.bash_history)
 # instead of overwriting it.
 shopt -s histappend
 
+
 # Store history immediately
 PROMPT_COMMAND='history -a'
 
-# Pyenv stuff: https://medium.com/@henriquebastos/the-definitive-guide-to-setup-my-python-workspace-628d68552e14
-export WORKON_HOME=~/.ve
-export PROJECT_HOME=~/workspace
-eval "$(pyenv init -)"
-export PIPENV_PYTHON=$PYENV_ROOT/shims/python
-#pyenv virtualenvwrapper_lazy
+
+
 
 # Get Vault token
 # Default to infra environment (not staging or prod)
-
 alias vault_stag_addr='export VAULT_ADDR=https://vault.staging.omadahealth.net'
 alias vault_infra_addr='export VAULT_ADDR=https://vault.infra.omadahealth.net'
 alias vault_prod_addr='export VAULT_ADDR=https://vault.prod.omadahealth.net'
@@ -64,12 +56,7 @@ alias vault_prod_addr='export VAULT_ADDR=https://vault.prod.omadahealth.net'
 
 # Source
 # https://sanctum.geek.nz/arabesque/better-bash-history/
-# http://stefaanlippens.net/my_bashrc_aliases_profile_and_other_stuff/
 
-alias py3='pyenv activate py3'
-alias kno='pyenv activate kno'
-alias jl='jupyter lab'
-export PYENV_ROOT=/usr/local/var/pyenv
  
 # Git aliases & functions
 # https://jonsuh.com/blog/git-command-line-shortcuts/
@@ -111,6 +98,7 @@ alias gsts='git stash save'
 # Git log find by commit message
 function glf() { git log --all --grep="$1"; }
 
+
 # Bash aliases
 alias ....="cd ../../.."
 alias ...="cd ../.."
@@ -118,7 +106,24 @@ alias ..="cd .."
 alias l='ls -al'
 alias ll='ls -l'
 
+
 # Use Starship to customize prompt
 # Based on this guide https://towardsdatascience.com/the-ultimate-guide-to-your-terminal-makeover-e11f9b87ac99
 # And some tips borrowed from this one: https://medium.com/@Clovis_app/configuration-of-a-beautiful-efficient-terminal-and-prompt-on-osx-in-7-minutes-827c29391961
 eval "$(starship init bash)"
+
+
+# Pyenv stuff
+# Primary source:: https://medium.com/@henriquebastos/the-definitive-guide-to-setup-my-python-workspace-628d68552e14
+# Connect to jupyterhttps://albertauyeung.github.io/2020/08/17/pyenv-jupyter.html
+alias py3='pyenv activate py3'
+alias kno='pyenv activate kno'
+export WORKON_HOME=~/.ve
+export PROJECT_HOME=~/workspace
+export PYENV_ROOT=/usr/local/var/pyenv
+export PIPENV_PYTHON=$PYENV_ROOT/shims/python
+eval "$(pyenv init -)"
+
+#pyenv virtualenvwrapper_lazy
+# Don't forget to run this to make the pyenv env available to jupyter `ipython kernel install --name py3`
+# https://stackoverflow.com/questions/36382508/packages-from-conda-env-not-found-in-jupyer-notebook/36395096#36395096
