@@ -13,13 +13,20 @@ alias w="curl wttr.in"
 # https://www.loekvandenouweland.com/content/the-default-interactive-shell-is-now-zsh.html
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
+# Bash auto-completion
+# https://sourabhbajaj.com/mac-setup/BashCompletion/
+[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+# Autojump
+# https://github.com/wting/autojump
+[ -f $(brew --prefix)/etc/profile.d/autojump.sh ] && . $(brew --prefix)/etc/profile.d/autojump.sh
+
 
 # Command line prompt formatting
 # https://thucnc.medium.com/how-to-show-current-git-branch-with-colors-in-bash-prompt-380d05a24745
-parse_git_branch() {
-    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
-}
-export PS1="\[\e[32m\]\w \[\e[91m\]\$(parse_git_branch)\[\e[00m\] ∆ "
+# parse_git_branch() {
+#     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+# }
+# export PS1="\[\e[32m\]\w \[\e[91m\]\$(parse_git_branch)\[\e[00m\] ∆ "
 
 # Set the default editor to vim.
 export EDITOR=vim
@@ -53,6 +60,7 @@ export PIPENV_PYTHON=$PYENV_ROOT/shims/python
 alias vault_stag_addr='export VAULT_ADDR=https://vault.staging.omadahealth.net'
 alias vault_infra_addr='export VAULT_ADDR=https://vault.infra.omadahealth.net'
 alias vault_prod_addr='export VAULT_ADDR=https://vault.prod.omadahealth.net'
+
 
 # Source
 # https://sanctum.geek.nz/arabesque/better-bash-history/
@@ -110,3 +118,7 @@ alias ..="cd .."
 alias l='ls -al'
 alias ll='ls -l'
 
+# Use Starship to customize prompt
+# Based on this guide https://towardsdatascience.com/the-ultimate-guide-to-your-terminal-makeover-e11f9b87ac99
+# And some tips borrowed from this one: https://medium.com/@Clovis_app/configuration-of-a-beautiful-efficient-terminal-and-prompt-on-osx-in-7-minutes-827c29391961
+eval "$(starship init bash)"
