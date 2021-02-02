@@ -62,11 +62,10 @@ nnoremap E $
 " highlight last inserted text
 nnoremap gV `[v`]
 
+
 " Map keys
 " set leader: https://medium.com/usevim/vim-101-what-is-the-leader-key-f2f5c1fa610f
 let mapleader=","
-vmap <space> viw " Space selects word
-
 " Easily edit vimrc and source it to effect changes
 " https://learnvimscriptthehardway.stevelosh.com/chapters/07.html
 nnoremap <leader>ev :split $MYVIMRC<cr>
@@ -79,7 +78,6 @@ nnoremap <leader>sv :source $MYVIMRC<cr> <bar> :PlugInstall<cr>
 " inoremap <esc> <nop>
 
 " Plugins 
-
 " Opens nerdtree
 map <C-n> :NERDTreeToggle<CR>
 
