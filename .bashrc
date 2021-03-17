@@ -1,7 +1,6 @@
 # Connects to remote dotfiles repo
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
-
 # Aliases and exports
 export PATH=/usr/local/bin:/usr/local/sbin:$PATH
 export MYVIMRC="~/.vimrc"
@@ -9,6 +8,7 @@ alias k="knowledge_repo"
 export KNOWLEDGE_REPO=~/workspace/science
 alias w="curl wttr.in"
 alias jl='jupyter lab'
+alias sp='brew services restart spotifyd; spt;'
 
 
 # Suppress bash deprecation warning
@@ -75,6 +75,7 @@ alias gcob='git checkout -b'
 alias gcom='git checkout main'
 alias gcos='git checkout staging'
 alias gcod='git checkout develop'
+alias gcor='git checkout --track' # https://stackoverflow.com/questions/9537392/git-fetch-remote-branch
 alias gd='git diff'
 alias gda='git diff HEAD'
 alias gi='git init'
