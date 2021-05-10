@@ -9,6 +9,11 @@ export KNOWLEDGE_REPO=~/workspace/science
 alias w="curl wttr.in"
 alias jl='jupyter lab'
 alias sp='brew services restart spotifyd; spt;'
+alias h2='how2 -l python'
+
+# Omada dotfiles
+export DFS_AUTO_UPDATE=1
+source "$HOME/workspace/dotfiles/dotfiles.sh"
 
 
 # Suppress bash deprecation warning
@@ -18,7 +23,12 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 
 # Bash auto-completion
 # https://sourabhbajaj.com/mac-setup/BashCompletion/
-# [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+# Bash completion https://sourabhbajaj.com/mac-setup/BashCompletion/
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+    . $(brew --prefix)/etc/bash_completion
+fi
+
+
 # Autojump
 # https://github.com/wting/autojump
 [ -f $(brew --prefix)/etc/profile.d/autojump.sh ] && . $(brew --prefix)/etc/profile.d/autojump.sh
@@ -42,9 +52,7 @@ shopt -s histappend
 
 
 # Store history immediately
-PROMPT_COMMAND='history -a'
-
-
+export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ;} history -a"
 
 
 # Get Vault token
