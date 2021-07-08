@@ -6,10 +6,16 @@ export PATH=/usr/local/bin:/usr/local/sbin:$PATH
 export MYVIMRC="~/.vimrc"
 alias k="knowledge_repo"
 export KNOWLEDGE_REPO=~/workspace/science
-alias w="curl wttr.in"
+alias w="curl http://wttr.in/Tahoe+City?format=3"
 alias jl='jupyter lab'
 alias sp='brew services restart spotifyd; spt;'
 alias h2='how2 -l python'
+
+# gcalcli https://github.com/insanum/gcalcli
+alias gcal='gcalcli --calendar Work#white --calendar Personal#green'
+alias ag='gcalcli --calendar Work#white --calendar Personal#green agenda'
+alias wk='gcalcli --calendar Work#white --calendar Personal#green calw'
+alias mo='gcalcli --calendar Work#white --calendar Personal#green calm'
 
 # Omada dotfiles
 export DFS_AUTO_UPDATE=1

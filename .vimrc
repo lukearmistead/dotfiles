@@ -1,4 +1,3 @@
-" TODO
 " autocomplete
 
 " Colors
@@ -18,6 +17,7 @@ set backspace=indent,eol,start
 " copy to global clipboard
 set clipboard=unnamed
 
+set encoding=UTF-8
 set number              " show line numbers
 set cursorline          " highlight current line
 filetype indent on      " load filetype-specific indent files
@@ -62,7 +62,6 @@ nnoremap E $
 " highlight last inserted text
 nnoremap gV `[v`]
 
-
 " Map keys
 " set leader: https://medium.com/usevim/vim-101-what-is-the-leader-key-f2f5c1fa610f
 let mapleader=","
@@ -71,11 +70,6 @@ let mapleader=","
 nnoremap <leader>ev :split $MYVIMRC<cr>
 " Sets source to vim, installs any new plugins, and quits the status bar
 nnoremap <leader>sv :source $MYVIMRC<cr> <bar> :PlugInstall<cr>
-
-" Switch from esc to jk
-" https://learnvimscriptthehardway.stevelosh.com/chapters/10.html
-" inoremap jk <esc>
-" inoremap <esc> <nop>
 
 " Plugins 
 " Opens nerdtree
@@ -88,16 +82,33 @@ nmap <Leader>f :Files<CR>
 nmap <Leader>l :BLines<CR>         
 " Lines in loaded buffers
 nmap <Leader>L :Lines<CR>
-" Search for projects"Calls MRU
-nmap <Leader>/ :Ag<Space>
 " Opens MRU 
 nmap <Leader>r :MRU<CR> 
 
 
+" Search text
+" https://www.freecodecamp.org/news/how-to-search-project-wide-vim-ripgrep-ack/
+let g:ackprg = 'rg --vimgrep --type-not sql --smart-case'
+" Auto close the Quickfix list after pressing '<enter>' on a list item
+let g:ack_autoclose = 1
+" Any empty ack search will search for the work the cursor is on
+let g:ack_use_cword_for_empty_search = 1
+" Don't jump to first match
+cnoreabbrev Ack Ack!
+" Maps <leader>/ so we're ready to type the search keyword
+nnoremap <Leader>/ :Ack!<Space>
+" }}}
+
+
+" Navigate quickfix list with ease
+nnoremap <silent> [q :cprevious<CR>
+nnoremap <silent> ]q :cnext<CR>
 
 call plug#begin('~/.vim/plugged')
 "NERDTree file tree
+Plug 'mileszs/ack.vim'
 Plug 'scrooloose/nerdtree'
+Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-sensible'
 Plug 'christoomey/vim-tmux-navigator'
 Plug '/usr/local/opt/fzf'
