@@ -17,6 +17,9 @@ alias ag='gcalcli --calendar Work#white --calendar Personal#green agenda'
 alias wk='gcalcli --calendar Work#white --calendar Personal#green calw'
 alias mo='gcalcli --calendar Work#white --calendar Personal#green calm'
 
+# Gets today's date
+alias dt='date  +"%Y%m%d"'
+
 # Omada dotfiles
 export DFS_AUTO_UPDATE=1
 source "$HOME/workspace/dotfiles/dotfiles.sh"
@@ -130,15 +133,16 @@ eval "$(starship init bash)"
 
 
 # Pyenv stuff
-# Primary source:: https://medium.com/@henriquebastos/the-definitive-guide-to-setup-my-python-workspace-628d68552e14
+# Primary source: https://medium.com/@henriquebastos/the-definitive-guide-to-setup-my-python-workspace-628d68552e14
 # Connect to jupyterhttps://albertauyeung.github.io/2020/08/17/pyenv-jupyter.html
 alias py3='pyenv activate py3'
 alias kno='pyenv activate kno'
 export WORKON_HOME=~/.ve
 export PROJECT_HOME=~/workspace
+
 export PYENV_ROOT=/usr/local/var/pyenv
 export PIPENV_PYTHON=$PYENV_ROOT/shims/python
-eval "$(pyenv init -)"
+eval "$(pyenv init --path)" # Contains `--path` flag following 2021 update of pyenv package https://stackoverflow.com/a/68228627/4447670
 
 #pyenv virtualenvwrapper_lazy
 # Don't forget to run this to make the pyenv env available to jupyter `ipython kernel install --name py3`
