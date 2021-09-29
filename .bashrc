@@ -1,5 +1,10 @@
 # Connects to remote dotfiles repo
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias rc='vim ~/.bashrc'
+
+# Omada dotfiles
+export DFS_AUTO_UPDATE=1
+source "$HOME/workspace/dotfiles/dotfiles.sh"
 
 # Aliases and exports
 export PATH=/usr/local/bin:/usr/local/sbin:$PATH
@@ -10,6 +15,10 @@ alias w="curl http://wttr.in/Tahoe+City?format=3"
 alias jl='jupyter lab'
 alias sp='brew services restart spotifyd; spt;'
 alias h2='how2 -l python'
+export PATH=/usr/local/bin:/usr/local/sbin:$PATH 
+export PATH=/usr/local/opt/ruby/bin:$PATH
+export PATH=$PATH:/usr/local/opt/imagemagick@6/bin
+
 
 # gcalcli https://github.com/insanum/gcalcli
 alias gcal='gcalcli --calendar Work#white --calendar Personal#green'
@@ -30,17 +39,9 @@ source "$HOME/workspace/dotfiles/dotfiles.sh"
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
 
-# Bash auto-completion
-# https://sourabhbajaj.com/mac-setup/BashCompletion/
-# Bash completion https://sourabhbajaj.com/mac-setup/BashCompletion/
-if [ -f $(brew --prefix)/etc/bash_completion ]; then
-    . $(brew --prefix)/etc/bash_completion
-fi
-
-
-# Autojump
-# https://github.com/wting/autojump
+# Autojump https://github.com/wting/autojump
 [ -f $(brew --prefix)/etc/profile.d/autojump.sh ] && . $(brew --prefix)/etc/profile.d/autojump.sh
+
 
 # Set the default editor to vim.
 export EDITOR=vim
@@ -64,8 +65,7 @@ shopt -s histappend
 export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ;} history -a"
 
 
-# Get Vault token
-# Default to infra environment (not staging or prod)
+# Get Vault token Default to infra environment (not staging or prod)
 alias vault_stag_addr='export VAULT_ADDR=https://vault.staging.omadahealth.net'
 alias vault_infra_addr='export VAULT_ADDR=https://vault.infra.omadahealth.net'
 alias vault_prod_addr='export VAULT_ADDR=https://vault.prod.omadahealth.net'
@@ -140,9 +140,11 @@ alias kno='pyenv activate kno'
 export WORKON_HOME=~/.ve
 export PROJECT_HOME=~/workspace
 
-export PYENV_ROOT=/usr/local/var/pyenv
-export PIPENV_PYTHON=$PYENV_ROOT/shims/python
-eval "$(pyenv init --path)" # Contains `--path` flag following 2021 update of pyenv package https://stackoverflow.com/a/68228627/4447670
+export PYENV_ROOT="$HOME/.pyenv"
+# export PIPENV_PYTHON=$PYENV_ROOT/shims/python
+export PATH="$PYENV_ROOT/bin:$PATH" 
+eval "$(pyenv init -)" # May need to contain `--path` flag following 2021 update of pyenv package https://stackoverflow.com/a/68228627/4447670
+eval "$(pyenv virtualenv-init -)"
 
 #pyenv virtualenvwrapper_lazy
 # Don't forget to run this to make the pyenv env available to jupyter `ipython kernel install --name py3`
