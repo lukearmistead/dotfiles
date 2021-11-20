@@ -2,15 +2,17 @@
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias rc='vim ~/.bashrc'
 
-# Omada dotfiles
+# Omada dotfiles and secrets
 export DFS_AUTO_UPDATE=1
 source "$HOME/workspace/dotfiles/dotfiles.sh"
+source "$HOME/.data_eng_secrets"
 
 # Aliases and exports
 export PATH=/usr/local/bin:/usr/local/sbin:$PATH
 export MYVIMRC="~/.vimrc"
 alias k="knowledge_repo"
 export KNOWLEDGE_REPO=~/workspace/science
+alias serverless-sandbox="serverless deploy --aws-profile sandbox --stage sandbox --verbose"
 alias w="curl http://wttr.in/Tahoe+City?format=3"
 alias jl='jupyter lab'
 alias sp='brew services restart spotifyd; spt;'
@@ -27,7 +29,7 @@ alias wk='gcalcli --calendar Work#white --calendar Personal#green calw'
 alias mo='gcalcli --calendar Work#white --calendar Personal#green calm'
 
 # Gets today's date
-alias dt='date  +"%Y%m%d"'
+alias dt='date  +"%Y-%m-%d"'
 
 # Omada dotfiles
 export DFS_AUTO_UPDATE=1
@@ -81,7 +83,7 @@ alias ga='git add'
 alias gaa='git add .'
 alias gaaa='git add --all'
 alias gau='git add --update'
-alias gl='git log'
+alias gl="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit" # https://coderwall.com/p/euwpig/a-better-git-log
 alias gb='git branch'
 alias gbd='git branch --delete '
 alias gc='git commit'
@@ -149,3 +151,9 @@ eval "$(pyenv virtualenv-init -)"
 #pyenv virtualenvwrapper_lazy
 # Don't forget to run this to make the pyenv env available to jupyter `ipython kernel install --name py3`
 # https://stackoverflow.com/questions/36382508/packages-from-conda-env-not-found-in-jupyer-notebook/36395096#36395096
+
+source $HOME/.rvm/scripts/rvm
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
