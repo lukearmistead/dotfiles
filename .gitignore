@@ -1,0 +1,10 @@
+.dotfiles
+tags
+*/data
+data/
+*.csv
+*.feather
+*.pkl
+*.DS_Store
+
+
