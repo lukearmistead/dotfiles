@@ -1,0 +1,90 @@
+# About Me
+set realname = "Luke Armistead"
+set from = "armistead.luke@gmail.com"
+set use_from = yes
+set envelope_from ="yes"
+
+# My credentials
+set imap_user = "armistead.luke@gmail.com"
+set smtp_url = "smtps://armistead.luke@smtp.gmail.com"
+
+# Needed to send emails
+# https://github.com/Homebrew/legacy-homebrew/issues/33419
+set smtp_authenticators="gssapi:login" 
+
+# Safely stores passwords
+# https://unix.stackexchange.com/questions/20570/mutt-how-to-safely-store-password
+source "gpg -d ~/.mutt/passwords.gpg |"
+
+# My mailboxes
+set folder = "imaps://imap.gmail.com/"
+set spoolfile = "+INBOX"
+set postponed = "+[Gmail]/Drafts"
+set record = "+[Gmail]/Sent Mail"
+set trash = "+[Gmail]/Trash"
+
+# Where to put the stuff
+set header_cache = "~/.mutt/cache/headers"
+set message_cachedir = "~/.mutt/cache/bodies"
+set certificate_file = "~/.mutt/certificates"
+
+# Etc
+set sort_aux = last-date-received                           
+set sort = reverse-threads
+set mail_check = 30
+set move = no
+set imap_keepalive = 900
+set editor = "vim"
+
+# GnuPG bootstrap
+# source ~/.mutt/gpg.rc
+
+# Navigation
+bind generic             z         noop
+bind index,pager,attach  g         noop
+bind index,pager         d         noop
+bind index,pager         s         noop
+bind index,pager         c         noop
+bind generic,pager       t         noop
+
+bind generic,index,pager \Cf       next-page
+bind generic,index,pager \Cb       previous-page
+bind generic             gg        first-entry
+bind generic,index       G         last-entry
+bind pager               gg        top
+bind pager               G         bottom
+bind generic,pager       \Cy       previous-line
+bind generic,index,pager \Ce       next-line
+bind generic,index,pager \Cd       half-down
+bind generic,index,pager \Cu       half-up
+bind generic             zt        current-top
+bind generic             zz        current-middle
+bind generic             zb        current-bottom
+bind index               za        collapse-thread
+bind index               zA        collapse-all
+bind index,pager         N         search-opposite
+bind index               <Backtab> previous-new-then-unread
+
+# Go to folder...
+macro index,pager gi "<change-folder>=INBOX<enter>"       "open inbox"
+macro index,pager gd "<change-folder>=Drafts<enter>"      "open drafts"
+macro index,pager gs "<change-folder>=Sent<enter>"        "open sent"
+macro index,pager gt "<change-folder>$trash<enter>"       "open trash"
+macro index,pager gf "<change-folder>?"                   "open mailbox..."
+
+# Actions
+# ----------------------------------------------------
+
+bind  index,pager    a   group-reply
+macro index,pager    dd  "<delete-message><sync-mailbox>"                                 "move message to trash"
+macro index,pager    dat "<delete-thread><sync-mailbox>"                                  "move thread to trash"
+
+# Command Line
+# ----------------------------------------------------
+
+bind editor \Cp history-up
+bind editor \Cn history-down
+
+# Further reading
+# https://www.andrews-corner.org/mutt.html
+
