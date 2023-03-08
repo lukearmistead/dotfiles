@@ -1,11 +1,14 @@
 # Connects to remote dotfiles repo
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias rc='vim ~/.bashrc'
+set -o vi
 
 # Omada dotfiles and secrets
 export DFS_AUTO_UPDATE=1
 source "$HOME/workspace/dotfiles/dotfiles.sh"
 source "$HOME/.data_eng_secrets"
+
+# SQLFluff
 
 # Aliases and exports
 export PATH=/usr/local/bin:/usr/local/sbin:$PATH
@@ -21,12 +24,54 @@ export PATH=/usr/local/bin:/usr/local/sbin:$PATH
 export PATH=/usr/local/opt/ruby/bin:$PATH
 export PATH=$PATH:/usr/local/opt/imagemagick@6/bin
 
-
 # gcalcli https://github.com/insanum/gcalcli
 alias gcal='gcalcli --calendar Work#white --calendar Personal#green'
-alias ag='gcalcli --calendar Work#white --calendar Personal#green agenda'
-alias wk='gcalcli --calendar Work#white --calendar Personal#green calw'
-alias mo='gcalcli --calendar Work#white --calendar Personal#green calm'
+alias agenda='gcalcli --calendar Work#white --calendar Personal#green agenda'
+alias week='gcalcli --calendar Work#white --calendar Personal#green calw'
+alias month='gcalcli --calendar Work#white --calendar Personal#green calm'
+
+# searching file contents with grep
+# https://alligator.io/workflow/command-line-basics-searching-file-contents/
+
+quick_text_note() {
+  NOTEDIRECTORY="$HOME/workspace/log/notes/"
+  DATE=$(date + "%Y-%m-%d-")
+  TITLE=$1
+  EXT=".md"
+  vim ${NOTEDIRECTORY}${DATE}${TITLE}${EXT}
+}
+alias n=quick_text_note
+
+convert_markdown_to_office_file_type() {
+    # Converts filetypes and outputs to Desktop
+    MARKDOWN_INPUT_PATH=$1
+    FILENAME=$(basename "${MARKDOWN_INPUT_PATH}" .md)
+    OFFICE_OUTPUT_DIR="$HOME/Desktop/"
+    OFFICE_OUTPUT_PATH="${OFFICE_OUTPUT_DIR}${FILENAME}".odt
+    OFFICE_STYLE_FORMAT_PATH="$HOME/.pandoc/custom-reference.odt"
+    pandoc ${MARKDOWN_INPUT_PATH} --from markdown --to odt --output ${OFFICE_OUTPUT_PATH} --reference-doc ${OFFICE_STYLE_FORMAT_PATH} --verbose
+}
+alias office=convert_markdown_to_office_file_type
+
+quick_email_to_self() {
+  SUBJECT=$1
+  EMAIL="armistead.luke@gmail.com"
+  mutt -s "$SUBJECT" ${EMAIL} < /dev/null
+}
+alias e=quick_email_to_self
+
+# Find
+search_non_dotfiles_in_this_directory() {
+  SEARCH_KEYWORD=$1
+  find . "$SEARCH_KEYWORD" -not -path '*/\.*'
+}
+alias f=search_non_dotfiles_in_this_directory
+
+# Enables not logging in for 
+export GPG_AGENT_INFO=$HOME/.gnupg/S.gpg-agent
+
+# Opens todo file
+alias td='vim $HOME/workspace/log/todo.txt'
 
 # Gets today's date
 alias dt='date  +"%Y-%m-%d"'
@@ -136,8 +181,9 @@ eval "$(starship init bash)"
 
 # Pyenv stuff
 # Primary source: https://medium.com/@henriquebastos/the-definitive-guide-to-setup-my-python-workspace-628d68552e14
-# Connect to jupyterhttps://albertauyeung.github.io/2020/08/17/pyenv-jupyter.html
+# Connect to jupyter https://albertauyeung.github.io/2020/08/17/pyenv-jupyter.html
 alias py3='pyenv activate py3'
+alias py10='pyenv activate py3.10'
 alias kno='pyenv activate kno'
 export WORKON_HOME=~/.ve
 export PROJECT_HOME=~/workspace
@@ -157,3 +203,9 @@ source $HOME/.rvm/scripts/rvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/luke.armistead/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '/Users/luke.armistead/Downloads/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/luke.armistead/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/luke.armistead/Downloads/google-cloud-sdk/completion.bash.inc'; fi
