@@ -15,3 +15,8 @@ Just a repo of personal dotfiles. Here are some of the sources that inspire the 
     1. Make sure that homebrew is in your `PATH` ([source](https://stackoverflow.com/a/68494567)): `export PATH=/opt/homebrew/bin:$PATH`
 1. Install applications 
     1. Run from  `$HOME` directory: `brew bundle`
+1. Vim
+    1. Install plug ```curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim```
+    1. Open the `.vimrc` with `<space> ev` and download all plugins with `<space> sv`
+1. Hotkeys are handled by Hammerspoon. This would be better with Karabiner for a machine without security oversight.
