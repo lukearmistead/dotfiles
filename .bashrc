@@ -1,5 +1,5 @@
 # Connects to remote dotfiles repo
-alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias dotfiles='/usr/bin/git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
 alias rc='vim ~/.bashrc'
 set -o vi
 
@@ -11,6 +11,7 @@ source "$HOME/.data_eng_secrets"
 # SQLFluff
 
 # Aliases and exports
+export PATH=/opt/homebrew/bin:$PATH
 export PATH=/usr/local/bin:/usr/local/sbin:$PATH
 export MYVIMRC="~/.vimrc"
 alias k="knowledge_repo"
@@ -20,8 +21,6 @@ alias w="curl http://wttr.in/Tahoe+City?format=3"
 alias jl='jupyter lab'
 alias sp='brew services restart spotifyd; spt;'
 alias h2='how2 -l python'
-export PATH=/usr/local/bin:/usr/local/sbin:$PATH 
-export PATH=/usr/local/opt/ruby/bin:$PATH
 export PATH=$PATH:/usr/local/opt/imagemagick@6/bin
 
 # gcalcli https://github.com/insanum/gcalcli
@@ -75,11 +74,6 @@ alias td='vim $HOME/workspace/log/todo.txt'
 
 # Gets today's date
 alias dt='date  +"%Y-%m-%d"'
-
-# Omada dotfiles
-export DFS_AUTO_UPDATE=1
-source "$HOME/workspace/dotfiles/dotfiles.sh"
-
 
 # Suppress bash deprecation warning
 # https://www.loekvandenouweland.com/content/the-default-interactive-shell-is-now-zsh.html
@@ -182,8 +176,7 @@ eval "$(starship init bash)"
 # Pyenv stuff
 # Primary source: https://medium.com/@henriquebastos/the-definitive-guide-to-setup-my-python-workspace-628d68552e14
 # Connect to jupyter https://albertauyeung.github.io/2020/08/17/pyenv-jupyter.html
-alias py3='pyenv activate py3'
-alias py10='pyenv activate py3.10'
+alias sci='pyenv activate science'
 alias kno='pyenv activate kno'
 export WORKON_HOME=~/.ve
 export PROJECT_HOME=~/workspace
@@ -197,8 +190,6 @@ eval "$(pyenv virtualenv-init -)"
 #pyenv virtualenvwrapper_lazy
 # Don't forget to run this to make the pyenv env available to jupyter `ipython kernel install --name py3`
 # https://stackoverflow.com/questions/36382508/packages-from-conda-env-not-found-in-jupyer-notebook/36395096#36395096
-
-source $HOME/.rvm/scripts/rvm
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

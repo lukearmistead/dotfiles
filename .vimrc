@@ -63,7 +63,7 @@ set hlsearch
 " https://jesseleite.com/posts/2/its-dangerous-to-vim-alone-take-fzf
 "-------------------------------------------------------------------
 
-Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 " All files 
