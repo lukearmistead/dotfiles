@@ -33,13 +33,16 @@ alias month='gcalcli --calendar Work#white --calendar Personal#green calm'
 # https://alligator.io/workflow/command-line-basics-searching-file-contents/
 
 quick_text_note() {
-  NOTEDIRECTORY="$HOME/workspace/log/notes/"
+  NOTEDIRECTORY="$HOME/workspace/notes/"
   DATE=$(date + "%Y-%m-%d-")
   TITLE=$1
   EXT=".md"
   vim ${NOTEDIRECTORY}${DATE}${TITLE}${EXT}
 }
 alias n=quick_text_note
+
+# Links to dropbox notes directory
+ln -s $HOME/Dropbox/notes/ $HOME/
 
 convert_markdown_to_office_file_type() {
     # Converts filetypes and outputs to Desktop

@@ -27,10 +27,10 @@ Just a repo of personal dotfiles. Here are some of the sources that inspire the 
        git config --global color.ui true
        git config --global core.editor vim
        ```
-   1. Generate ssh keys to access GitHub ([link](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) and Gitlab ([link](https://docs.gitlab.com/ee/user/ssh.html#generate-an-ssh-key-pair))
+   1. Generate ssh keys to access GitHub ([link](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)) and Gitlab ([link](https://docs.gitlab.com/ee/user/ssh.html#generate-an-ssh-key-pair))
 1. Set up general python environment
     1. Install latest version `pyenv install <latest stable version>`
-    1. Bind to virtual environment `pyenv virtualenv <latest stable version> science`
-    1. Activate `pyenv activate science` and install packages `pip3 install -r ~/$HOME/requirements.txt`
+    1. Bind to virtual environment `pyenv virtualenv <latest stable version> <memorable name for env>`
+    1. Activate `pyenv activate <memorable name for env>` and install packages `pip3 install -r ~/$HOME/requirements.txt`
 1. Hotkeys are handled by Hammerspoon. This would be better with Karabiner for a machine without security oversight.
     1. Open Hammerspoon, right click the menu option, and reload the config
