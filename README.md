@@ -27,7 +27,7 @@ Just a repo of personal dotfiles. Here are some of the sources that inspire the 
        git config --global color.ui true
        git config --global core.editor vim
        ```
-   1. Generate ssh keys to access GitHub ([link](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) and Gitlab ([link](https://docs.gitlab.com/ee/user/ssh.html#generate-an-ssh-key-pair))
+   1. Generate ssh keys to access GitHub ([link](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)) and Gitlab ([link](https://docs.gitlab.com/ee/user/ssh.html#generate-an-ssh-key-pair))
 1. Set up general python environment
     1. Install latest version `pyenv install <latest stable version>`
     1. Bind to virtual environment `pyenv virtualenv <latest stable version> <memorable name for env>`
