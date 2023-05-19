@@ -264,6 +264,7 @@ let g:limelight_conceal_ctermfg = 240
 
 " Markdown
 " https://vim.works/2019/03/16/using-markdown-in-vim/
+" Also need to run this to set up `npm install -g instant-markdown-d`
 Plug 'instant-markdown/vim-instant-markdown', {'for': 'markdown', 'do': 'yarn install'}
 
 

@@ -42,7 +42,7 @@ quick_text_note() {
 alias n=quick_text_note
 
 # Links to dropbox notes directory
-ln -s $HOME/Dropbox/notes/ $HOME/
+ln -s $HOME/Dropbox/notes/ $HOME/workspace/
 
 convert_markdown_to_office_file_type() {
     # Converts filetypes and outputs to Desktop
@@ -173,13 +173,14 @@ alias ll='ls -l'
 # Use Starship to customize prompt
 # Based on this guide https://towardsdatascience.com/the-ultimate-guide-to-your-terminal-makeover-e11f9b87ac99
 # And some tips borrowed from this one: https://medium.com/@Clovis_app/configuration-of-a-beautiful-efficient-terminal-and-prompt-on-osx-in-7-minutes-827c29391961
-eval "$(starship init bash)"
+# eval "$(starship init bash)"
 
 
 # Pyenv stuff
 # Primary source: https://medium.com/@henriquebastos/the-definitive-guide-to-setup-my-python-workspace-628d68552e14
 # Connect to jupyter https://albertauyeung.github.io/2020/08/17/pyenv-jupyter.html
 alias sci='pyenv activate science'
+alias are='pyenv activate arete'
 alias kno='pyenv activate kno'
 export WORKON_HOME=~/.ve
 export PROJECT_HOME=~/workspace

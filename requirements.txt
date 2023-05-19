@@ -141,6 +141,7 @@ optuna==2.7.0
 packaging==20.8
 pandas==1.2.0
 pandasql==0.7.3
+pandoc==2.3
 pandocfilters==1.4.3
 parso==0.8.1
 pathspec==0.8.1
