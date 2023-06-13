@@ -34,12 +34,16 @@ alias month='gcalcli --calendar Work#white --calendar Personal#green calm'
 
 quick_text_note() {
   NOTEDIRECTORY="$HOME/workspace/notes/"
-  DATE=$(date + "%Y-%m-%d-")
   TITLE=$1
   EXT=".md"
-  vim ${NOTEDIRECTORY}${DATE}${TITLE}${EXT}
+  vim ${NOTEDIRECTORY}${TITLE}${EXT}
 }
 alias n=quick_text_note
+
+function listfiles() {
+    ls -ltuh | grep -v '^d' | grep -v '^total' | awk '{printf "%-5s %-3s %-3s %-15s\n", $6, $7, $8, substr($0, index($0,$9))}'
+}
+alias ll=listfiles
 
 # Links to dropbox notes directory
 ln -s $HOME/Dropbox/notes/ $HOME/workspace/
@@ -51,7 +55,7 @@ convert_markdown_to_office_file_type() {
     OFFICE_OUTPUT_DIR="$HOME/Desktop/"
     OFFICE_OUTPUT_PATH="${OFFICE_OUTPUT_DIR}${FILENAME}".odt
     OFFICE_STYLE_FORMAT_PATH="$HOME/.pandoc/custom-reference.odt"
-    pandoc ${MARKDOWN_INPUT_PATH} --from markdown --to odt --output ${OFFICE_OUTPUT_PATH} --reference-doc ${OFFICE_STYLE_FORMAT_PATH} --verbose
+    pandoc ${MARKDOWN_INPUT_PATH} --from markdown-auto_identifiers --to odt --output ${OFFICE_OUTPUT_PATH} --reference-doc ${OFFICE_STYLE_FORMAT_PATH} --verbose
 }
 alias office=convert_markdown_to_office_file_type
 
@@ -71,9 +75,6 @@ alias f=search_non_dotfiles_in_this_directory
 
 # Enables not logging in for 
 export GPG_AGENT_INFO=$HOME/.gnupg/S.gpg-agent
-
-# Opens todo file
-alias td='vim $HOME/workspace/log/todo.txt'
 
 # Gets today's date
 alias dt='date  +"%Y-%m-%d"'
@@ -167,7 +168,6 @@ alias ....="cd ../../.."
 alias ...="cd ../.."
 alias ..="cd .."
 alias l='ls -al'
-alias ll='ls -l'
 
 
 # Use Starship to customize prompt
