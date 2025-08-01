@@ -7,11 +7,11 @@ set -o vi
 export DFS_AUTO_UPDATE=1
 source "$HOME/workspace/dotfiles/dotfiles.sh"
 source "$HOME/.data_eng_secrets"
-
-# SQLFluff
-
+export SKIP=terraform_validate
 # Aliases and exports
 export PATH=/opt/homebrew/bin:$PATH
+# export HOMEBREW_CASK_OPTS="--appdir=~/Applications"
+export HOMEBREW_AUTO_UPDATE_SECS=604800
 export PATH=/usr/local/bin:/usr/local/sbin:$PATH
 export MYVIMRC="~/.vimrc"
 alias k="knowledge_repo"
@@ -21,6 +21,9 @@ alias w="curl http://wttr.in/Tahoe+City?format=3"
 alias jl='jupyter lab'
 alias sp='brew services restart spotifyd; spt;'
 alias h2='how2 -l python'
+alias sqls="psql -h doppler.staging.omadahealth.net -p 5439 -U luke_armistead staging"
+alias sqlr="psql -h doppler.preprod.omadahealth.net -p 5439 -U luke_armistead data_barn_preprod"
+alias sqlp="psql -h doppler.omadahealth.net -p 5439 -U luke_armistead databarn"
 export PATH=$PATH:/usr/local/opt/imagemagick@6/bin
 
 # gcalcli https://github.com/insanum/gcalcli
@@ -32,16 +35,18 @@ alias month='gcalcli --calendar Work#white --calendar Personal#green calm'
 # searching file contents with grep
 # https://alligator.io/workflow/command-line-basics-searching-file-contents/
 
+alias n=notes
+export PATH=$HOME/bin/:$PATH
+
 quick_text_note() {
-  NOTEDIRECTORY="$HOME/workspace/notes/"
+  NOTE_DIRECTORY="$HOME/workspace/notes/"
   TITLE=$1
   EXT=".md"
   vim ${NOTEDIRECTORY}${TITLE}${EXT}
 }
-alias n=quick_text_note
 
 function listfiles() {
-    ls -ltuh | grep -v '^d' | grep -v '^total' | awk '{printf "%-5s %-3s %-3s %-15s\n", $6, $7, $8, substr($0, index($0,$9))}'
+    ls -ltruh | grep -v '^d' | grep -v '^total' | awk '{printf "%-5s %-3s %-3s %-15s\n", $6, $7, $8, substr($0, index($0,$9))}'
 }
 alias ll=listfiles
 
@@ -50,12 +55,15 @@ ln -s $HOME/Dropbox/notes/ $HOME/workspace/
 
 convert_markdown_to_office_file_type() {
     # Converts filetypes and outputs to Desktop
-    MARKDOWN_INPUT_PATH=$1
-    FILENAME=$(basename "${MARKDOWN_INPUT_PATH}" .md)
-    OFFICE_OUTPUT_DIR="$HOME/Desktop/"
-    OFFICE_OUTPUT_PATH="${OFFICE_OUTPUT_DIR}${FILENAME}".odt
-    OFFICE_STYLE_FORMAT_PATH="$HOME/.pandoc/custom-reference.odt"
-    pandoc ${MARKDOWN_INPUT_PATH} --from markdown-auto_identifiers --to odt --output ${OFFICE_OUTPUT_PATH} --reference-doc ${OFFICE_STYLE_FORMAT_PATH} --verbose
+    BASE_NAME=${1}
+    INPUT_DIRECTORY="$HOME/workspace/notes/"
+    INPUT_EXT=".md"
+    INPUT_PATH=${INPUT_DIRECTORY}${BASE_NAME}${INPUT_EXT}
+    OUTPUT_DIR="$HOME/Desktop/"
+    OUTPUT_EXT=".odt"
+    OUTPUT_PATH=${OUTPUT_DIR}${BASE_NAME}${OUTPUT_EXT}
+    STYLE_FORMAT_PATH="$HOME/.pandoc/custom-reference.odt"
+    pandoc ${INPUT_PATH} --from markdown-auto_identifiers --to odt --output ${OUTPUT_PATH} --reference-doc ${STYLE_FORMAT_PATH} --verbose
 }
 alias office=convert_markdown_to_office_file_type
 
@@ -182,6 +190,7 @@ alias l='ls -al'
 alias sci='pyenv activate science'
 alias are='pyenv activate arete'
 alias kno='pyenv activate kno'
+alias llm='pyenv activate llm'
 export WORKON_HOME=~/.ve
 export PROJECT_HOME=~/workspace
 
@@ -190,6 +199,7 @@ export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH" 
 eval "$(pyenv init -)" # May need to contain `--path` flag following 2021 update of pyenv package https://stackoverflow.com/a/68228627/4447670
 eval "$(pyenv virtualenv-init -)"
+eval "$(direnv hook bash)" # For LLM Gateway
 
 #pyenv virtualenvwrapper_lazy
 # Don't forget to run this to make the pyenv env available to jupyter `ipython kernel install --name py3`
@@ -204,3 +214,5 @@ if [ -f '/Users/luke.armistead/Downloads/google-cloud-sdk/path.bash.inc' ]; then
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/luke.armistead/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/luke.armistead/Downloads/google-cloud-sdk/completion.bash.inc'; fi
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

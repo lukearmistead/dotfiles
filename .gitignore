@@ -6,5 +6,4 @@ data/
 *.feather
 *.pkl
 *.DS_Store
-
-
+.creds/*
