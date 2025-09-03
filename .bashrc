@@ -3,27 +3,17 @@ alias dotfiles='/usr/bin/git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
 alias rc='vim ~/.bashrc'
 set -o vi
 
-# Omada dotfiles and secrets
-export DFS_AUTO_UPDATE=1
-source "$HOME/workspace/dotfiles/dotfiles.sh"
-source "$HOME/.data_eng_secrets"
-export SKIP=terraform_validate
 # Aliases and exports
 export PATH=/opt/homebrew/bin:$PATH
 # export HOMEBREW_CASK_OPTS="--appdir=~/Applications"
 export HOMEBREW_AUTO_UPDATE_SECS=604800
 export PATH=/usr/local/bin:/usr/local/sbin:$PATH
 export MYVIMRC="~/.vimrc"
-alias k="knowledge_repo"
-export KNOWLEDGE_REPO=~/workspace/science
 alias serverless-sandbox="serverless deploy --aws-profile sandbox --stage sandbox --verbose"
 alias w="curl http://wttr.in/Tahoe+City?format=3"
 alias jl='jupyter lab'
 alias sp='brew services restart spotifyd; spt;'
 alias h2='how2 -l python'
-alias sqls="psql -h doppler.staging.omadahealth.net -p 5439 -U luke_armistead staging"
-alias sqlr="psql -h doppler.preprod.omadahealth.net -p 5439 -U luke_armistead data_barn_preprod"
-alias sqlp="psql -h doppler.omadahealth.net -p 5439 -U luke_armistead databarn"
 export PATH=$PATH:/usr/local/opt/imagemagick@6/bin
 
 # gcalcli https://github.com/insanum/gcalcli
@@ -39,7 +29,7 @@ alias n=notes
 export PATH=$HOME/bin/:$PATH
 
 quick_text_note() {
-  NOTE_DIRECTORY="$HOME/workspace/notes/"
+  NOTE_DIRECTORY="$HOME/dev/notes/"
   TITLE=$1
   EXT=".md"
   vim ${NOTEDIRECTORY}${TITLE}${EXT}
@@ -51,12 +41,12 @@ function listfiles() {
 alias ll=listfiles
 
 # Links to dropbox notes directory
-ln -s $HOME/Dropbox/notes/ $HOME/workspace/
+ln -s $HOME/Dropbox/notes/ $HOME/dev/
 
 convert_markdown_to_office_file_type() {
     # Converts filetypes and outputs to Desktop
     BASE_NAME=${1}
-    INPUT_DIRECTORY="$HOME/workspace/notes/"
+    INPUT_DIRECTORY="$HOME/dev/notes/"
     INPUT_EXT=".md"
     INPUT_PATH=${INPUT_DIRECTORY}${BASE_NAME}${INPUT_EXT}
     OUTPUT_DIR="$HOME/Desktop/"
@@ -116,12 +106,6 @@ shopt -s histappend
 
 # Store history immediately
 export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ;} history -a"
-
-
-# Get Vault token Default to infra environment (not staging or prod)
-alias vault_stag_addr='export VAULT_ADDR=https://vault.staging.omadahealth.net'
-alias vault_infra_addr='export VAULT_ADDR=https://vault.infra.omadahealth.net'
-alias vault_prod_addr='export VAULT_ADDR=https://vault.prod.omadahealth.net'
 
 
 # Source
@@ -192,7 +176,7 @@ alias are='pyenv activate arete'
 alias kno='pyenv activate kno'
 alias llm='pyenv activate llm'
 export WORKON_HOME=~/.ve
-export PROJECT_HOME=~/workspace
+export PROJECT_HOME=~/dev
 
 export PYENV_ROOT="$HOME/.pyenv"
 # export PIPENV_PYTHON=$PYENV_ROOT/shims/python
