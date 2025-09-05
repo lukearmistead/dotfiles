@@ -15,7 +15,7 @@ osascript -e 'tell application "System Preferences" to quit'
 
 echo "🖱️  Configuring mouse..."
 
-# Set mouse tracking speed to maximum allowed by Apple (3.0)
+# Set mouse speed
 defaults write NSGlobalDomain com.apple.trackpad.scaling -float 2.0
 defaults write NSGlobalDomain com.apple.mouse.scaling -float 2.0
 
@@ -30,6 +30,10 @@ defaults write NSGlobalDomain KeyRepeat -int 2
 
 # Set delay until repeat to shortest  
 defaults write NSGlobalDomain InitialKeyRepeat -int 15
+
+# Make function keys (F1, F2, etc.) the default behavior
+# Press Fn + F1/F2 to access brightness/volume controls
+defaults write NSGlobalDomain com.apple.keyboard.fnState -bool true
 
 ###############################################################################
 # Finder

@@ -3,11 +3,6 @@ alias dotfiles='/usr/bin/git --git-dir=$HOME/dotfiles/ --work-tree=$HOME'
 alias rc='vim ~/.bashrc'
 set -o vi
 
-# Omada dotfiles and secrets
-export DFS_AUTO_UPDATE=1
-source "$HOME/workspace/dotfiles/dotfiles.sh"
-source "$HOME/.data_eng_secrets"
-export SKIP=terraform_validate
 # Aliases and exports
 export PATH=/opt/homebrew/bin:$PATH
 # export HOMEBREW_CASK_OPTS="--appdir=~/Applications"
@@ -21,9 +16,6 @@ alias w="curl http://wttr.in/Tahoe+City?format=3"
 alias jl='jupyter lab'
 alias sp='brew services restart spotifyd; spt;'
 alias h2='how2 -l python'
-alias sqls="psql -h doppler.staging.omadahealth.net -p 5439 -U luke_armistead staging"
-alias sqlr="psql -h doppler.preprod.omadahealth.net -p 5439 -U luke_armistead data_barn_preprod"
-alias sqlp="psql -h doppler.omadahealth.net -p 5439 -U luke_armistead databarn"
 export PATH=$PATH:/usr/local/opt/imagemagick@6/bin
 
 # gcalcli https://github.com/insanum/gcalcli
@@ -116,12 +108,6 @@ shopt -s histappend
 
 # Store history immediately
 export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ;} history -a"
-
-
-# Get Vault token Default to infra environment (not staging or prod)
-alias vault_stag_addr='export VAULT_ADDR=https://vault.staging.omadahealth.net'
-alias vault_infra_addr='export VAULT_ADDR=https://vault.infra.omadahealth.net'
-alias vault_prod_addr='export VAULT_ADDR=https://vault.prod.omadahealth.net'
 
 
 # Source
