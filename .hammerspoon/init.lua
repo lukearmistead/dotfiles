@@ -1,5 +1,4 @@
 -- ~/.hammerspoon/init.lua
--- Simple dock shortcuts
 
 -- Function to launch or focus application
 function launchOrFocusApp(appName)
@@ -11,47 +10,22 @@ function launchOrFocusApp(appName)
     end
 end
 
--- Set up simple hotkeys
-hs.hotkey.bind({"alt"}, "`", function()
-    launchOrFocusApp("Finder")
-end)
-
-hs.hotkey.bind({"alt"}, "1", function()
-    launchOrFocusApp("Google Chrome")
-end)
-
-hs.hotkey.bind({"alt"}, "2", function()
-    launchOrFocusApp("iTerm")
-end)
+-- Application shortcuts
+hs.hotkey.bind({"alt"}, "`", function() launchOrFocusApp("Finder") end)
+hs.hotkey.bind({"alt"}, "1", function() launchOrFocusApp("Google Chrome") end)
+hs.hotkey.bind({"alt"}, "2", function() launchOrFocusApp("iTerm") end)
 
 -- Reload Hammerspoon config
-hs.hotkey.bind({"cmd", "alt", "ctrl"}, "R", function()
-    hs.reload()
-end)
-
-print("Dock shortcuts loaded:")
-print("Alt+` → Finder")
-print("Alt+1 → Google Chrome") 
-print("Alt+2 → iTerm")
-
-hs.alert.show("Dock shortcuts ready!", {}, 1.5)
-
--- Window management shortcuts
--- Add this to your ~/.hammerspoon/init.lua
-
--- Helper function to get screen dimensions
-function getScreenFrame()
-    return hs.screen.mainScreen():frame()
-end
+hs.hotkey.bind({"cmd", "alt", "ctrl"}, "R", function() hs.reload() end)
 
 -- Cmd+Ctrl+L: Move window to right half
 hs.hotkey.bind({"cmd", "ctrl"}, "L", function()
     local win = hs.window.focusedWindow()
     if win then
-        local screen = getScreenFrame()
+        local screen = win:screen():frame()
         win:setFrame({
-            x = screen.w / 2,
-            y = 0,
+            x = screen.x + screen.w / 2,
+            y = screen.y,
             w = screen.w / 2,
             h = screen.h
         })
@@ -62,10 +36,10 @@ end)
 hs.hotkey.bind({"cmd", "ctrl"}, "H", function()
     local win = hs.window.focusedWindow()
     if win then
-        local screen = getScreenFrame()
+        local screen = win:screen():frame()
         win:setFrame({
-            x = 0,
-            y = 0,
+            x = screen.x,
+            y = screen.y,
             w = screen.w / 2,
             h = screen.h
         })
@@ -76,35 +50,52 @@ end)
 hs.hotkey.bind({"cmd", "ctrl"}, "K", function()
     local win = hs.window.focusedWindow()
     if win then
-        local screen = getScreenFrame()
-        win:setFrame({
-            x = 0,
-            y = 0,
-            w = screen.w,
-            h = screen.h
-        })
+        win:maximize()
     end
 end)
 
--- Cmd+Ctrl+J: Center window at half size
+-- Cmd+Ctrl+J: Center window at 60% size
 hs.hotkey.bind({"cmd", "ctrl"}, "J", function()
     local win = hs.window.focusedWindow()
     if win then
-        local screen = getScreenFrame()
-        local newWidth = screen.w * 0.6  -- 60% of screen width
-        local newHeight = screen.h * 0.7 -- 70% of screen height
+        local screen = win:screen():frame()
+        local newWidth = screen.w * 0.6
+        local newHeight = screen.h * 0.7
         win:setFrame({
-            x = (screen.w - newWidth) / 2,   -- Center horizontally
-            y = (screen.h - newHeight) / 2,  -- Center vertically
+            x = screen.x + (screen.w - newWidth) / 2,
+            y = screen.y + (screen.h - newHeight) / 2,
             w = newWidth,
             h = newHeight
         })
-
     end
 end)
 
-print("Window management shortcuts loaded:")
+-- Ctrl+Cmd+U: Move window to left monitor
+hs.hotkey.bind({"ctrl", "cmd"}, "U", function()
+    local win = hs.window.focusedWindow()
+    if win then
+        win:moveOneScreenWest(nil, nil, 0)  -- instant movement
+    end
+end)
+
+-- Ctrl+Cmd+D: Move window to right monitor
+hs.hotkey.bind({"ctrl", "cmd"}, "D", function()
+    local win = hs.window.focusedWindow()
+    if win then
+        win:moveOneScreenEast(nil, nil, 0)  -- instant movement
+    end
+end)
+
+-- Print all shortcuts
+print("Shortcuts loaded:")
+print("Alt+` → Finder")
+print("Alt+1 → Google Chrome") 
+print("Alt+2 → iTerm")
 print("Cmd+Ctrl+H → Left half")
 print("Cmd+Ctrl+L → Right half") 
 print("Cmd+Ctrl+K → Maximize")
 print("Cmd+Ctrl+J → Center (60% size)")
+print("Ctrl+Cmd+U → Move to left monitor")
+print("Ctrl+Cmd+D → Move to right monitor")
+
+hs.alert.show("Hammerspoon ready!", {}, 1.5)

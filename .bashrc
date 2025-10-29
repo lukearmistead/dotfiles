@@ -4,6 +4,7 @@ alias rc='vim ~/.bashrc'
 set -o vi
 
 # Aliases and exports
+PS1='\[\033[0;90m\]\w\[\033[0m\] λ '
 export PATH=/opt/homebrew/bin:$PATH
 # export HOMEBREW_CASK_OPTS="--appdir=~/Applications"
 export HOMEBREW_AUTO_UPDATE_SECS=604800
@@ -21,10 +22,15 @@ alias gcal='gcalcli --calendar Work#white --calendar Personal#green'
 alias agenda='gcalcli --calendar Work#white --calendar Personal#green agenda'
 alias week='gcalcli --calendar Work#white --calendar Personal#green calw'
 alias month='gcalcli --calendar Work#white --calendar Personal#green calm'
+#
+# Use bash-completion, if available, and avoid double-sourcing
+[[ $PS1 &&
+  ! ${BASH_COMPLETION_VERSINFO:-} &&
+  -f /usr/share/bash-completion/bash_completion ]] &&
+    . /usr/share/bash-completion/bash_completion
 
 # searching file contents with grep
 # https://alligator.io/workflow/command-line-basics-searching-file-contents/
-
 alias n=notes
 export PATH=$HOME/bin/:$PATH
 
@@ -180,7 +186,7 @@ export PROJECT_HOME=~/dev
 
 export PYENV_ROOT="$HOME/.pyenv"
 # export PIPENV_PYTHON=$PYENV_ROOT/shims/python
-export PATH="$PYENV_ROOT/bin:$PATH" 
+export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)" # May need to contain `--path` flag following 2021 update of pyenv package https://stackoverflow.com/a/68228627/4447670
 eval "$(pyenv virtualenv-init -)"
 eval "$(direnv hook bash)" # For LLM Gateway
