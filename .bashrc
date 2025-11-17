@@ -4,7 +4,11 @@ alias rc='vim ~/.bashrc'
 set -o vi
 
 # Aliases and exports
-PS1='\[\033[0;90m\]\w\[\033[0m\] λ '
+parse_git_branch() {
+  git branch 2>/dev/null | grep '^*' | sed 's/* //'
+}
+PS1='\[\033[0;90m\]\w\[\033[0m\] \[\033[0;33m\] \[\033[0m\]\[\033[0;32m\]($(parse_git_branch))\[\033[0m\] λ '
+
 export PATH=/opt/homebrew/bin:$PATH
 # export HOMEBREW_CASK_OPTS="--appdir=~/Applications"
 export HOMEBREW_AUTO_UPDATE_SECS=604800
