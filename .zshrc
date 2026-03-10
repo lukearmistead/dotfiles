@@ -35,8 +35,8 @@ setopt EXTENDED_GLOB             # Use extended globbing syntax
 # --------------------------------------------------------------------------
 
 # Set default editor
-export EDITOR='vim'
-export VISUAL='vim'
+export EDITOR='nvim'
+export VISUAL='nvim'
 
 # Language
 export LANG='en_US.UTF-8'
@@ -46,15 +46,18 @@ export LC_ALL='en_US.UTF-8'
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="/usr/local/bin:$PATH"
 
-# Homebrew (Apple Silicon)
+# Homebrew
 if [[ -f /opt/homebrew/bin/brew ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
-
-# Homebrew (Intel)
-if [[ -f /usr/local/bin/brew ]]; then
+elif [[ -f /usr/local/bin/brew ]]; then
     eval "$(/usr/local/bin/brew shellenv)"
 fi
+
+# Personal environment
+export HOMEBREW_AUTO_UPDATE_SECS=604800
+export GPG_AGENT_INFO=$HOME/.gnupg/S.gpg-agent
+export PATH="/usr/local/sbin:$PATH"
+export PATH="$HOME/bin:$PATH"
 
 # Man pages
 export MANPAGER="less -X"
@@ -67,9 +70,13 @@ export LESSHISTFILE=-  # Disable less history
 # Completions
 # --------------------------------------------------------------------------
 
-# Initialize completion system
+# Initialize completion system (rebuild cache once daily)
 autoload -Uz compinit
-compinit
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+    compinit
+else
+    compinit -C
+fi
 
 # Completion options
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'  # Case-insensitive completion
@@ -82,8 +89,8 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 # Key Bindings
 # --------------------------------------------------------------------------
 
-# Use emacs key bindings (or switch to 'bindkey -v' for vim bindings)
-bindkey -e
+# Vi key bindings
+bindkey -v
 
 # History search
 bindkey '^[[A' history-search-backward  # Up arrow
@@ -102,42 +109,12 @@ bindkey '^[[F' end-of-line
 bindkey '^[[3~' delete-char
 
 # --------------------------------------------------------------------------
-# Prompt
-# --------------------------------------------------------------------------
-
-# Load colors
-autoload -Uz colors
-colors
-
-# Simple, informative prompt
-# Customize this to your liking
-PROMPT='%F{green}%n@%m%f:%F{blue}%~%f$ '
-
-# Git prompt (optional - uncomment if you want git info in prompt)
-# autoload -Uz vcs_info
-# precmd() { vcs_info }
-# zstyle ':vcs_info:git:*' formats '%F{yellow}(%b)%f '
-# setopt PROMPT_SUBST
-# PROMPT='%F{green}%n@%m%f:%F{blue}%~%f ${vcs_info_msg_0_}$ '
-
-# --------------------------------------------------------------------------
 # Aliases
 # --------------------------------------------------------------------------
 
-# Navigation
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias ~='cd ~'
-alias -- -='cd -'
-
 # List directory contents
-alias ls='ls --color=auto'
-alias l='ls -lFh'
-alias la='ls -lAFh'
-alias ll='ls -l'
-alias lt='ls -ltr'
-alias ld='ls -ld */'
+alias ls='ls -AG'
+alias ll='ls -lA'
 
 # Safety nets
 alias rm='rm -i'
@@ -146,31 +123,40 @@ alias mv='mv -i'
 alias mkdir='mkdir -p'
 
 # Shortcuts
-alias h='history'
-alias j='jobs -l'
 alias which='type -a'
-alias path='echo -e ${PATH//:/\\n}'
-alias now='date +"%T"'
-alias nowdate='date +"%Y-%m-%d"'
 
 # Git shortcuts
 alias g='git'
-alias gs='git status'
+alias gst='git status'
 alias gc='git commit'
+alias gcm='git commit --message'
+alias gfa='git commit --fixup'
 alias ga='git add'
 alias gd='git diff'
 alias gb='git branch'
 alias gl='git log --oneline --graph --decorate'
 alias gco='git checkout'
-alias gp='git push'
-alias gpu='git pull'
+alias gcob='git checkout -b'
+alias gcom='git checkout main'
+alias 'g^'='git push origin HEAD'
+alias gv='git pull --rebase'
+alias gm='git merge --no-ff'
+alias gma='git merge --abort'
+alias gmc='git merge --continue'
+alias gr='git rebase'
+alias gri='git rebase --interactive'
+alias gsta='git stash apply'
+alias gstd='git stash drop'
+alias gstl='git stash list'
+alias gstp='git stash pop'
 
 # Dotfiles management
 alias dotfiles='/usr/bin/git --git-dir=$HOME/dotfiles --work-tree=$HOME'
 
-# Editor shortcuts
-alias v='vim'
-alias vi='vim'
+# Personal shortcuts
+alias n='notes'
+alias v='nvim'
+alias vi='nvim'
 
 # macOS specific
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -180,20 +166,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     alias afk='/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend'
 fi
 
-# Colorize grep output
-alias grep='grep --color=auto'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-
-# Process management
-alias psg='ps aux | grep -v grep | grep -i'
-alias topmem='ps aux | sort -nk 4 | tail -10'
-alias topcpu='ps aux | sort -nk 3 | tail -10'
-
 # Network
 alias myip='curl -s https://ipinfo.io/ip'
 alias localip='ipconfig getifaddr en0'
-alias ports='netstat -tulanp'
 
 # Development
 alias python='python3'
@@ -207,11 +182,6 @@ alias serve='python3 -m http.server'
 # Create directory and cd into it
 mkd() {
     mkdir -p "$@" && cd "$_"
-}
-
-# Change to project directory
-proj() {
-    cd ~/Developer/projects/"$1"
 }
 
 # Extract archives
@@ -236,16 +206,6 @@ extract() {
     fi
 }
 
-# Find file by name
-ff() {
-    find . -type f -iname "*$1*"
-}
-
-# Find directory by name
-fd() {
-    find . -type d -iname "*$1*"
-}
-
 # Quick backup
 backup() {
     cp "$1" "$1.backup-$(date +%Y%m%d-%H%M%S)"
@@ -262,37 +222,6 @@ cheat() {
 }
 
 # --------------------------------------------------------------------------
-# Development Tools
-# --------------------------------------------------------------------------
-
-# Python (pyenv)
-if command -v pyenv 1>/dev/null 2>&1; then
-    export PYENV_ROOT="$HOME/.pyenv"
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init -)"
-    
-    # pyenv-virtualenv
-    if command -v pyenv-virtualenv-init 1>/dev/null 2>&1; then
-        eval "$(pyenv virtualenv-init -)"
-    fi
-fi
-
-# Node Version Manager
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
-# Ruby Version Manager
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-
-# Go
-export GOPATH="$HOME/go"
-export PATH="$GOPATH/bin:$PATH"
-
-# Rust
-[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
-
-# --------------------------------------------------------------------------
 # Tool Integrations
 # --------------------------------------------------------------------------
 
@@ -300,7 +229,7 @@ export PATH="$GOPATH/bin:$PATH"
 if [[ -f ~/.fzf.zsh ]]; then
     source ~/.fzf.zsh
     export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-    
+
     # Use ripgrep for fzf if available
     if command -v rg 1>/dev/null 2>&1; then
         export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
@@ -311,7 +240,7 @@ fi
 # zoxide - Better cd
 if command -v zoxide 1>/dev/null 2>&1; then
     eval "$(zoxide init zsh)"
-    alias cd='z'
+    alias j='z'
 fi
 
 # direnv - Directory-specific environment variables
@@ -328,23 +257,14 @@ fi
 # Local Configuration
 # --------------------------------------------------------------------------
 
+# Symlink notes directory
+[[ ! -L "$HOME/dev/notes" ]] && ln -s "$HOME/Dropbox/notes/" "$HOME/dev/notes/"
+
 # Source local configuration if it exists
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
-# --------------------------------------------------------------------------
-# Welcome Message
-# --------------------------------------------------------------------------
-
-# Display system info on new shell (optional - comment out if you don't want it)
-if command -v fastfetch 1>/dev/null 2>&1; then
-    fastfetch
-elif command -v neofetch 1>/dev/null 2>&1; then
-    neofetch
-else
-    echo "Welcome to $(hostname)"
-    echo "Today is $(date)"
-fi
-
 alias claude="/Users/luke/.claude/local/claude"
 
-export PATH="/Users/luke/.local/bin:$PATH"
+# Starship prompt (must be last)
+eval "$(starship init zsh)"
+
