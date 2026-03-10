@@ -51,7 +51,7 @@ function listfiles() {
 alias ll=listfiles
 
 # Links to dropbox notes directory
-ln -s $HOME/Dropbox/notes/ $HOME/dev/
+ln -s $HOME/Dropbox/notes/ $HOME/dev/notes/
 
 convert_markdown_to_office_file_type() {
     # Converts filetypes and outputs to Desktop
@@ -81,7 +81,7 @@ search_non_dotfiles_in_this_directory() {
 }
 alias f=search_non_dotfiles_in_this_directory
 
-# Enables not logging in for 
+# Enables not logging in for
 export GPG_AGENT_INFO=$HOME/.gnupg/S.gpg-agent
 
 # Gets today's date
@@ -98,13 +98,13 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 
 # Set the default editor to vim.
 export EDITOR=vim
-alias v="vim"
+alias v="nvim"
 # Increases history file size
 HISTFILESIZE=10000000
 HISTSIZE=10000000
 
 
-# History ignores duplicates, ls's, and commands that start with a space 
+# History ignores duplicates, ls's, and commands that start with a space
 HISTCONTROL=ignoreboth
 HISTIGNORE='ls:bg:fg:history'
 
@@ -121,7 +121,7 @@ export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ;} history -a"
 # Source
 # https://sanctum.geek.nz/arabesque/better-bash-history/
 
- 
+
 # Git aliases & functions
 # https://jonsuh.com/blog/git-command-line-shortcuts/
 alias ga='git add'
@@ -181,19 +181,13 @@ alias l='ls -al'
 # Pyenv stuff
 # Primary source: https://medium.com/@henriquebastos/the-definitive-guide-to-setup-my-python-workspace-628d68552e14
 # Connect to jupyter https://albertauyeung.github.io/2020/08/17/pyenv-jupyter.html
-alias sci='pyenv activate science'
-alias are='pyenv activate arete'
-alias kno='pyenv activate kno'
-alias llm='pyenv activate llm'
 export WORKON_HOME=~/.ve
 export PROJECT_HOME=~/dev
 
 export PYENV_ROOT="$HOME/.pyenv"
-# export PIPENV_PYTHON=$PYENV_ROOT/shims/python
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)" # May need to contain `--path` flag following 2021 update of pyenv package https://stackoverflow.com/a/68228627/4447670
 eval "$(pyenv virtualenv-init -)"
-eval "$(direnv hook bash)" # For LLM Gateway
 
 #pyenv virtualenvwrapper_lazy
 # Don't forget to run this to make the pyenv env available to jupyter `ipython kernel install --name py3`

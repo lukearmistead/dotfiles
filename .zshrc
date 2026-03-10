@@ -344,3 +344,7 @@ else
     echo "Welcome to $(hostname)"
     echo "Today is $(date)"
 fi
+
+alias claude="/Users/luke/.claude/local/claude"
+
+export PATH="/Users/luke/.local/bin:$PATH"

@@ -13,7 +13,8 @@ end
 -- Application shortcuts
 hs.hotkey.bind({"alt"}, "`", function() launchOrFocusApp("Finder") end)
 hs.hotkey.bind({"alt"}, "1", function() launchOrFocusApp("Google Chrome") end)
-hs.hotkey.bind({"alt"}, "2", function() launchOrFocusApp("iTerm") end)
+hs.hotkey.bind({"alt"}, "2", function() launchOrFocusApp("Ghostty") end)
+hs.hotkey.bind({"alt"}, "3", function() launchOrFocusApp("Claude") end)
 
 -- Reload Hammerspoon config
 hs.hotkey.bind({"cmd", "alt", "ctrl"}, "R", function() hs.reload() end)
@@ -89,10 +90,10 @@ end)
 -- Print all shortcuts
 print("Shortcuts loaded:")
 print("Alt+` → Finder")
-print("Alt+1 → Google Chrome") 
+print("Alt+1 → Google Chrome")
 print("Alt+2 → iTerm")
 print("Cmd+Ctrl+H → Left half")
-print("Cmd+Ctrl+L → Right half") 
+print("Cmd+Ctrl+L → Right half")
 print("Cmd+Ctrl+K → Maximize")
 print("Cmd+Ctrl+J → Center (60% size)")
 print("Ctrl+Cmd+U → Move to left monitor")
