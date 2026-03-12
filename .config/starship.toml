@@ -1,5 +1,6 @@
 # Minimal starship prompt
 command_timeout = 100
+add_newline = false
 
 format = """$directory$git_branch$git_status$python$nodejs$rust$golang$java$ruby$character"""
 
