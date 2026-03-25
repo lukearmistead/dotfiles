@@ -1,20 +1,10 @@
 -- ~/.hammerspoon/init.lua
 
--- Function to launch or focus application
-function launchOrFocusApp(appName)
-    local app = hs.application.find(appName)
-    if app then
-        app:activate()
-    else
-        hs.application.launchOrFocus(appName)
-    end
-end
-
 -- Application shortcuts
-hs.hotkey.bind({"alt"}, "`", function() launchOrFocusApp("Finder") end)
-hs.hotkey.bind({"alt"}, "1", function() launchOrFocusApp("Google Chrome") end)
-hs.hotkey.bind({"alt"}, "2", function() launchOrFocusApp("Ghostty") end)
-hs.hotkey.bind({"alt"}, "3", function() launchOrFocusApp("Claude") end)
+hs.hotkey.bind({"alt"}, "`", function() hs.application.launchOrFocus("Finder") end)
+hs.hotkey.bind({"alt"}, "1", function() hs.application.launchOrFocus("Google Chrome") end)
+hs.hotkey.bind({"alt"}, "2", function() hs.application.launchOrFocus("Ghostty") end)
+hs.hotkey.bind({"alt"}, "3", function() hs.application.launchOrFocus("Claude") end)
 
 -- Reload Hammerspoon config
 hs.hotkey.bind({"cmd", "alt", "ctrl"}, "R", function() hs.reload() end)
