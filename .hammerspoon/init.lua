@@ -2,7 +2,7 @@
 
 -- Application shortcuts
 hs.hotkey.bind({"alt"}, "`", function() hs.application.launchOrFocus("Finder") end)
-hs.hotkey.bind({"alt"}, "1", function() hs.application.launchOrFocus("Google Chrome") end)
+hs.hotkey.bind({"alt"}, "1", function() hs.application.launchOrFocus("Safari") end)
 hs.hotkey.bind({"alt"}, "2", function() hs.application.launchOrFocus("Ghostty") end)
 hs.hotkey.bind({"alt"}, "3", function() hs.application.launchOrFocus("Claude") end)
 
@@ -80,8 +80,8 @@ end)
 -- Print all shortcuts
 print("Shortcuts loaded:")
 print("Alt+` → Finder")
-print("Alt+1 → Google Chrome")
-print("Alt+2 → iTerm")
+print("Alt+1 → Browser")
+print("Alt+2 → Terminal")
 print("Cmd+Ctrl+H → Left half")
 print("Cmd+Ctrl+L → Right half")
 print("Cmd+Ctrl+K → Maximize")
