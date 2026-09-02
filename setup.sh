@@ -457,7 +457,7 @@ main() {
             log "Requesting sudo access (you may need to enter your password)..."
             sudo -v
             # Keep sudo alive
-            while true; do sudo -n true; sleep 60; kill -0 "$" || exit; done 2>/dev/null &
+            while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
         else
             warning "Running from curl - skipping sudo setup"
             info "You may be prompted for sudo password during installation"
