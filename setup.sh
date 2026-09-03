@@ -26,6 +26,13 @@ DOTFILES_REPO="https://github.com/lukearmistead/dotfiles.git"
 DOTFILES_DIR="$HOME/dotfiles"
 BACKUP_DIR="$HOME/.dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
 
+# curl | bash gives the script no real source file, unlike running it directly
+if [ -z "${BASH_SOURCE[0]:-}" ]; then
+    RUNNING_FROM_CURL=true
+else
+    RUNNING_FROM_CURL=false
+fi
+
 #==============================================================================
 # Helper Functions
 #==============================================================================
@@ -44,6 +51,15 @@ warning() {
 
 info() {
     echo -e "${CYAN}[INFO]${NC} $1"
+}
+
+# Runs a setup step without letting its failure abort the rest of setup
+run_step() {
+    local step_name="$1"
+    shift
+    if ! "$@"; then
+        error "$step_name failed - continuing with remaining setup steps"
+    fi
 }
 
 prompt_yes_no() {
@@ -118,12 +134,11 @@ setup_homebrew() {
             log "Installing Homebrew..."
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
             
-            # Add Homebrew to PATH for Apple Silicon Macs
+            # Load Homebrew into this session; .zshrc (from the dotfiles repo)
+            # already handles it permanently for future shells
             if [[ $(uname -m) == "arm64" ]]; then
-                echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "$HOME/.zprofile"
                 eval "$(/opt/homebrew/bin/brew shellenv)"
             else
-                echo 'eval "$(/usr/local/bin/brew shellenv)"' >> "$HOME/.zprofile"
                 eval "$(/usr/local/bin/brew shellenv)"
             fi
         else
@@ -341,12 +356,6 @@ setup_python() {
         else
             info "Python $latest_python already installed"
         fi
-        
-        # Install Python packages from requirements.txt if it exists
-        if [ -f "$HOME/requirements.txt" ]; then
-            log "Installing Python packages from requirements.txt..."
-            pip3 install -r "$HOME/requirements.txt"
-        fi
     fi
 }
 
@@ -445,39 +454,38 @@ main() {
     # Detect if we're running from a pipe (curl)
     if [ "$RUNNING_FROM_CURL" = true ]; then
         info "Running from remote execution (curl)"
-        info "Interactive prompts will be skipped"
+        # curl | bash feeds the script itself over stdin, leaving nothing left
+        # to read for sudo/git prompts; reclaim the real terminal if one exists
+        if ! exec < /dev/tty 2>/dev/null; then
+            info "No interactive terminal available - prompts will be skipped"
+        fi
     fi
-    
+
     # Detect operating system
     detect_os
-    
-    # Ask for sudo password upfront (if not running from curl)
+
+    # Ask for sudo password upfront
     if [ "$OS" = "macOS" ]; then
-        if [ "$RUNNING_FROM_CURL" = false ]; then
-            log "Requesting sudo access (you may need to enter your password)..."
-            sudo -v
-            # Keep sudo alive
-            while true; do sudo -n true; sleep 60; kill -0 "$" || exit; done 2>/dev/null &
-        else
-            warning "Running from curl - skipping sudo setup"
-            info "You may be prompted for sudo password during installation"
-        fi
+        log "Requesting sudo access (you may need to enter your password)..."
+        sudo -v
+        # Keep sudo alive
+        while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
     fi
     
     # Run setup steps
     info "Starting setup process..."
     
-    setup_xcode_tools
-    setup_homebrew
-    setup_dotfiles  # This now handles cloning if needed
-    install_homebrew_packages
-    setup_vim
-    setup_tmux
-    setup_git
-    setup_python
-    setup_hammerspoon
-    create_directory_structure
-    setup_macos_defaults
+    run_step "Xcode tools setup" setup_xcode_tools
+    run_step "Homebrew setup" setup_homebrew
+    run_step "Dotfiles setup" setup_dotfiles  # This now handles cloning if needed
+    run_step "Homebrew package installation" install_homebrew_packages
+    run_step "Vim setup" setup_vim
+    run_step "Tmux setup" setup_tmux
+    run_step "Git setup" setup_git
+    run_step "Python setup" setup_python
+    run_step "Hammerspoon setup" setup_hammerspoon
+    run_step "Directory structure creation" create_directory_structure
+    run_step "macOS defaults setup" setup_macos_defaults
     
     # Final message
     echo -e "${GREEN}"

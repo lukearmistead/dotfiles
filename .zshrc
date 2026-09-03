@@ -52,19 +52,19 @@ export LC_ALL='en_US.UTF-8'
 # Path configuration
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="/usr/local/bin:$PATH"
+export PATH="/usr/local/sbin:$PATH"
+export PATH="$HOME/bin:$PATH"
 
-# Homebrew
+# Personal environment
+export HOMEBREW_AUTO_UPDATE_SECS=604800
+export GPG_AGENT_INFO=$HOME/.gnupg/S.gpg-agent
+
+# Homebrew (last, so its bin directories take priority over everything above)
 if [[ -f /opt/homebrew/bin/brew ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 elif [[ -f /usr/local/bin/brew ]]; then
     eval "$(/usr/local/bin/brew shellenv)"
 fi
-
-# Personal environment
-export HOMEBREW_AUTO_UPDATE_SECS=604800
-export GPG_AGENT_INFO=$HOME/.gnupg/S.gpg-agent
-export PATH="/usr/local/sbin:$PATH"
-export PATH="$HOME/bin:$PATH"
 
 # Man pages
 export MANPAGER="less -X"
