@@ -1,6 +1,5 @@
 # https://twit.tv/shows/hands-on-mac/episodes/9
 # https://thoughtbot.com/blog/brewfile-a-gemfile-but-for-homebrew
-tap "homebrew/services"
 brew "bash"
 brew "bash-completion"
 brew "fzf"
@@ -9,7 +8,7 @@ brew "node"
 brew "neovim"
 brew "starship"
 brew "tmux"
-brew "vim"
+brew "uv"
 brew "zoxide"
 cask "claude-code"
 cask "hammerspoon"

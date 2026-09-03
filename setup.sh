@@ -2,11 +2,15 @@
 
 #==============================================================================
 # AUTOMATED LAPTOP SETUP SCRIPT
-# This script automates the entire laptop setup process including:
-# - Dotfiles management via bare git repo
-# - Homebrew and application installation
-# - Development environment setup (Python, Git, Tmux)
-# - macOS system preferences
+# This script automates the core laptop bootstrap process:
+# - Dotfiles checkout via bare git repo
+# - Homebrew and package installation (see Brewfile)
+# - Tmux plugin installation
+# - Directory scaffolding
+#
+# Anything one-time, opinionated, or better left to human judgment (git
+# identity, macOS system preferences, per-project Python versions) is
+# documented in README.md as a manual step instead of automated here.
 #==============================================================================
 
 set -euo pipefail  # Exit on error, undefined vars, and pipe failures
@@ -62,20 +66,6 @@ run_step() {
     fi
 }
 
-prompt_yes_no() {
-    local prompt="$1"
-    local response
-    
-    while true; do
-        read -rp "$prompt (y/n): " response
-        case "$response" in
-            [yY][eE][sS]|[yY]) return 0 ;;
-            [nN][oO]|[nN]) return 1 ;;
-            *) echo "Please answer yes or no." ;;
-        esac
-    done
-}
-
 check_command() {
     if command -v "$1" &> /dev/null; then
         return 0
@@ -114,7 +104,7 @@ setup_xcode_tools() {
         if ! xcode-select -p &> /dev/null; then
             log "Installing Xcode Command Line Tools..."
             xcode-select --install
-            
+
             # Wait for installation to complete
             until xcode-select -p &> /dev/null; do
                 sleep 5
@@ -129,11 +119,11 @@ setup_xcode_tools() {
 setup_homebrew() {
     if [ "$OS" = "macOS" ]; then
         log "Setting up Homebrew..."
-        
+
         if ! check_command brew; then
             log "Installing Homebrew..."
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-            
+
             # Load Homebrew into this session; .zshrc (from the dotfiles repo)
             # already handles it permanently for future shells
             if [[ $(uname -m) == "arm64" ]]; then
@@ -144,7 +134,7 @@ setup_homebrew() {
         else
             info "Homebrew already installed"
         fi
-        
+
         # Update Homebrew
         log "Updating Homebrew..."
         brew update
@@ -154,35 +144,32 @@ setup_homebrew() {
     fi
 }
 
+# Backs up any tracked dotfile path that already exists on disk as a real
+# file (not a symlink), so `git checkout` never silently clobbers it. The
+# file list is derived from the repo itself so it can't drift out of sync.
 backup_existing_dotfiles() {
     log "Backing up existing dotfiles..."
-    
-    # List of common dotfiles to backup
-    local dotfiles=(
-        ".bashrc"
-        ".bash_profile"
-        ".zshrc"
-        ".tmux.conf"
-        ".gitconfig"
-        ".gitignore_global"
-    )
-    
+
+    local tracked_files
+    tracked_files=$(/usr/bin/git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" ls-tree -r --name-only HEAD)
+
     local backup_needed=false
-    for file in "${dotfiles[@]}"; do
+    while IFS= read -r file; do
         if [ -e "$HOME/$file" ] && [ ! -L "$HOME/$file" ]; then
             backup_needed=true
             break
         fi
-    done
-    
+    done <<< "$tracked_files"
+
     if [ "$backup_needed" = true ]; then
         mkdir -p "$BACKUP_DIR"
-        for file in "${dotfiles[@]}"; do
+        while IFS= read -r file; do
             if [ -e "$HOME/$file" ] && [ ! -L "$HOME/$file" ]; then
                 log "Backing up $file to $BACKUP_DIR/"
-                mv "$HOME/$file" "$BACKUP_DIR/"
+                mkdir -p "$(dirname "$BACKUP_DIR/$file")"
+                mv "$HOME/$file" "$BACKUP_DIR/$file"
             fi
-        done
+        done <<< "$tracked_files"
         info "Existing dotfiles backed up to: $BACKUP_DIR"
     else
         info "No existing dotfiles need backing up"
@@ -191,7 +178,7 @@ backup_existing_dotfiles() {
 
 setup_dotfiles() {
     log "Setting up dotfiles..."
-    
+
     # Clone dotfiles as a bare repository
     if [ ! -d "$DOTFILES_DIR" ]; then
         log "Cloning dotfiles repository..."
@@ -199,22 +186,7 @@ setup_dotfiles() {
     else
         info "Dotfiles repository already exists"
     fi
-    
-    # Define the dotfiles alias
-    alias dotfiles="/usr/bin/git --git-dir=$DOTFILES_DIR --work-tree=$HOME"
-    
-    # Add alias to shell config
-    local shell_config
-    if [ -n "${ZSH_VERSION:-}" ]; then
-        shell_config="$HOME/.zshrc"
-    else
-        shell_config="$HOME/.bashrc"
-    fi
-    
-    if ! grep -q "alias dotfiles=" "$shell_config" 2>/dev/null; then
-        echo "alias dotfiles='/usr/bin/git --git-dir=$DOTFILES_DIR --work-tree=$HOME'" >> "$shell_config"
-    fi
-    
+
     # Checkout dotfiles
     log "Checking out dotfiles..."
     if ! /usr/bin/git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" checkout 2>/dev/null; then
@@ -222,18 +194,18 @@ setup_dotfiles() {
         backup_existing_dotfiles
         /usr/bin/git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" checkout --force
     fi
-    
+
     # Configure the repository
     log "Configuring dotfiles repository..."
     /usr/bin/git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" config --local status.showUntrackedFiles no
-    
+
     log "Dotfiles setup complete"
 }
 
 install_homebrew_packages() {
     if [ "$OS" = "macOS" ] && check_command brew; then
         log "Installing Homebrew packages..."
-        
+
         # Check if Brewfile exists
         if [ -f "$HOME/Brewfile" ]; then
             log "Installing packages from Brewfile..."
@@ -249,7 +221,7 @@ install_homebrew_packages() {
 
 setup_tmux() {
     log "Setting up Tmux..."
-    
+
     # Install Tmux Plugin Manager (TPM)
     if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
         log "Installing Tmux Plugin Manager..."
@@ -257,7 +229,7 @@ setup_tmux() {
     else
         info "TPM already installed"
     fi
-    
+
     # Install tmux plugins
     if check_command tmux; then
         log "Installing tmux plugins..."
@@ -272,137 +244,16 @@ setup_tmux() {
     fi
 }
 
-setup_git() {
-    log "Setting up Git..."
-    
-    # Check if git config is already set
-    if [ -z "$(git config --global user.name)" ]; then
-        read -rp "Enter your Git user name: " git_username
-        git config --global user.name "$git_username"
-    fi
-    
-    if [ -z "$(git config --global user.email)" ]; then
-        read -rp "Enter your Git email: " git_email
-        git config --global user.email "$git_email"
-    fi
-    
-    # Set default configurations
-    git config --global color.ui true
-    git config --global core.editor nvim
-    git config --global init.defaultBranch main
-    
-    info "Git configuration complete"
-}
-
-setup_python() {
-    log "Setting up Python environment..."
-    
-    # Install pyenv
-    if ! check_command pyenv; then
-        if [ "$OS" = "macOS" ] && check_command brew; then
-            log "Installing pyenv..."
-            brew install pyenv pyenv-virtualenv
-        else
-            log "Installing pyenv via git..."
-            git clone https://github.com/pyenv/pyenv.git ~/.pyenv
-            git clone https://github.com/pyenv/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
-        fi
-        
-        # Add pyenv to PATH
-        echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
-        echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
-        echo 'eval "$(pyenv init -)"' >> ~/.zshrc
-        echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.zshrc
-        
-        # Load pyenv for current session
-        export PYENV_ROOT="$HOME/.pyenv"
-        export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init -)"
-        eval "$(pyenv virtualenv-init -)"
-    else
-        info "pyenv already installed"
-    fi
-    
-    # Install latest stable Python
-    if check_command pyenv; then
-        log "Checking for latest Python version..."
-        latest_python=$(pyenv install --list | grep -E "^\s*[0-9]+\.[0-9]+\.[0-9]+$" | tail -1 | xargs)
-        
-        if ! pyenv versions | grep -q "$latest_python"; then
-            log "Installing Python $latest_python..."
-            pyenv install "$latest_python"
-            pyenv global "$latest_python"
-        else
-            info "Python $latest_python already installed"
-        fi
-    fi
-}
-
 setup_hammerspoon() {
-    if [ "$OS" = "macOS" ]; then
-        log "Setting up Hammerspoon..."
-        
-        # Install Hammerspoon if not already installed
-        if ! [ -d "/Applications/Hammerspoon.app" ]; then
-            if check_command brew; then
-                log "Installing Hammerspoon..."
-                brew install --cask hammerspoon
-            fi
-        else
-            info "Hammerspoon already installed"
-        fi
-        
-        # Reload Hammerspoon config
-        if [ -d "/Applications/Hammerspoon.app" ]; then
-            log "Reloading Hammerspoon configuration..."
-            osascript -e 'tell application "Hammerspoon" to reload config'
-        fi
-    fi
-}
-
-setup_macos_defaults() {
-    if [ "$OS" = "macOS" ]; then
-        if prompt_yes_no "Do you want to apply macOS system defaults?"; then
-            log "Applying macOS defaults..."
-            
-            # If there's a .macos file in the dotfiles, run it
-            if [ -f "$HOME/.macos" ]; then
-                bash "$HOME/.macos"
-            else
-                # Apply some sensible defaults
-                
-                # Dock
-                defaults write com.apple.dock autohide -bool true
-                defaults write com.apple.dock show-recents -bool false
-                defaults write com.apple.dock minimize-to-application -bool true
-                
-                # Finder
-                defaults write com.apple.finder ShowPathbar -bool true
-                defaults write com.apple.finder ShowStatusBar -bool true
-                defaults write com.apple.finder AppleShowAllFiles -bool true
-                
-                # Screenshots
-                defaults write com.apple.screencapture location -string "$HOME/Desktop/Screenshots"
-                mkdir -p "$HOME/Desktop/Screenshots"
-                
-                # Trackpad
-                defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-                defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
-                
-                # Restart affected applications
-                for app in "Dock" "Finder"; do
-                    killall "${app}" &> /dev/null || true
-                done
-            fi
-            
-            log "macOS defaults applied"
-        fi
+    if [ "$OS" = "macOS" ] && [ -d "/Applications/Hammerspoon.app" ]; then
+        log "Reloading Hammerspoon configuration..."
+        osascript -e 'tell application "Hammerspoon" to reload config'
     fi
 }
 
 create_directory_structure() {
     log "Creating directory structure..."
-    
+
     local directories=(
         "$HOME/Developer"
         "$HOME/Developer/projects"
@@ -410,7 +261,7 @@ create_directory_structure() {
         "$HOME/.config"
         "$HOME/.local/bin"
     )
-    
+
     for dir in "${directories[@]}"; do
         if [ ! -d "$dir" ]; then
             mkdir -p "$dir"
@@ -429,7 +280,7 @@ main() {
     echo "║     AUTOMATED LAPTOP SETUP SCRIPT        ║"
     echo "╚══════════════════════════════════════════╝"
     echo -e "${NC}"
-    
+
     # Detect if we're running from a pipe (curl)
     if [ "$RUNNING_FROM_CURL" = true ]; then
         info "Running from remote execution (curl)"
@@ -450,47 +301,38 @@ main() {
         # Keep sudo alive
         while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
     fi
-    
+
     # Run setup steps
     info "Starting setup process..."
-    
+
     run_step "Xcode tools setup" setup_xcode_tools
     run_step "Homebrew setup" setup_homebrew
-    run_step "Dotfiles setup" setup_dotfiles  # This now handles cloning if needed
+    run_step "Dotfiles setup" setup_dotfiles
     run_step "Homebrew package installation" install_homebrew_packages
     run_step "Tmux setup" setup_tmux
-    run_step "Git setup" setup_git
-    run_step "Python setup" setup_python
-    run_step "Hammerspoon setup" setup_hammerspoon
+    run_step "Hammerspoon reload" setup_hammerspoon
     run_step "Directory structure creation" create_directory_structure
-    run_step "macOS defaults setup" setup_macos_defaults
-    
+
     # Final message
     echo -e "${GREEN}"
     echo "╔══════════════════════════════════════════╗"
     echo "║       SETUP COMPLETED SUCCESSFULLY!      ║"
     echo "╚══════════════════════════════════════════╝"
     echo -e "${NC}"
-    
+
     info "Please restart your terminal or run: source ~/.zshrc"
-    
-    if [ "$RUNNING_FROM_CURL" = true ]; then
-        info ""
-        info "Since this was run from curl, please complete these manual steps:"
-        info "  1. Configure git: git config --global user.name 'Your Name'"
-        info "  2. Configure git: git config --global user.email 'your@email.com'"
-        info "  3. Open Hammerspoon and reload config"
-        info "  4. In tmux, install plugins with: <prefix> + I"
-    else
-        info "You may need to manually:"
-        info "  - Open Hammerspoon and reload config"
-        info "  - Install tmux plugins with: <prefix> + I"
+    info ""
+    info "Remaining manual steps (see README.md):"
+    if [ -z "$(git config --global user.name 2>/dev/null)" ] || [ -z "$(git config --global user.email 2>/dev/null)" ]; then
+        info "  - Set your git identity: git config --global user.name 'Your Name' && git config --global user.email 'you@example.com'"
     fi
-    
+    info "  - Optional: apply macOS system preferences with ./macos-preferences.sh"
+    info "  - Optional: pin a Python version per project with: uv python install <version> && uv python pin <version>"
+
     if [ -d "$BACKUP_DIR" ]; then
         warning "Your original dotfiles were backed up to: $BACKUP_DIR"
     fi
-    
+
     # If the script was downloaded, offer to clean it up
     if [ "$RUNNING_FROM_CURL" = false ] && [ -f "$0" ]; then
         if [ "$(basename "$0")" = "setup.sh" ] && [ "$(dirname "$0")" = "." ]; then

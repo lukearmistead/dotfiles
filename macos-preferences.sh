@@ -6,9 +6,6 @@ set -e
 
 echo "🍎 Configuring macOS system preferences..."
 
-# Close any open System Preferences panes
-osascript -e 'tell application "System Preferences" to quit'
-
 ###############################################################################
 # Mouse & Trackpad
 ###############################################################################
@@ -34,6 +31,10 @@ defaults write NSGlobalDomain InitialKeyRepeat -int 15
 # Make function keys (F1, F2, etc.) the default behavior
 # Press Fn + F1/F2 to access brightness/volume controls
 defaults write NSGlobalDomain com.apple.keyboard.fnState -bool true
+
+# Caps Lock -> Control (hold) / Escape (tap) is configured via Karabiner-Elements,
+# tracked at ~/.config/karabiner/karabiner.json. Karabiner watches that file and
+# applies it live, no logout needed - nothing to do here as long as dotfiles are checked out.
 
 echo "🚫 Removing unwanted keyboard shortcuts..."
 
@@ -115,7 +116,6 @@ for app in "Dock" "Finder" "SystemUIServer"; do
     killall "${app}" &> /dev/null || true
 done
 
-echo "" 
-echo "✅ Essential macOS preferences configured!" 
-echo "📝 Note: The Caps Lock → Control mapping requires a logout/restart to take effect."
+echo ""
+echo "✅ Essential macOS preferences configured!"
 echo "🎉 Your Mac is now configured with your preferred settings!"
