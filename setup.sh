@@ -5,7 +5,7 @@
 # This script automates the entire laptop setup process including:
 # - Dotfiles management via bare git repo
 # - Homebrew and application installation
-# - Development environment setup (Python, Git, Vim, Tmux)
+# - Development environment setup (Python, Git, Tmux)
 # - macOS system preferences
 #==============================================================================
 
@@ -162,8 +162,6 @@ backup_existing_dotfiles() {
         ".bashrc"
         ".bash_profile"
         ".zshrc"
-        ".vimrc"
-        ".vim"
         ".tmux.conf"
         ".gitconfig"
         ".gitignore_global"
@@ -249,25 +247,6 @@ install_homebrew_packages() {
     fi
 }
 
-setup_vim() {
-    log "Setting up Vim..."
-    
-    # Install vim-plug
-    if [ ! -f "$HOME/.vim/autoload/plug.vim" ]; then
-        log "Installing vim-plug..."
-        curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-            https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    else
-        info "vim-plug already installed"
-    fi
-    
-    # Install Vim plugins
-    if check_command vim; then
-        log "Installing Vim plugins..."
-        vim +PlugInstall +qall
-    fi
-}
-
 setup_tmux() {
     log "Setting up Tmux..."
     
@@ -309,7 +288,7 @@ setup_git() {
     
     # Set default configurations
     git config --global color.ui true
-    git config --global core.editor vim
+    git config --global core.editor nvim
     git config --global init.defaultBranch main
     
     info "Git configuration complete"
@@ -479,7 +458,6 @@ main() {
     run_step "Homebrew setup" setup_homebrew
     run_step "Dotfiles setup" setup_dotfiles  # This now handles cloning if needed
     run_step "Homebrew package installation" install_homebrew_packages
-    run_step "Vim setup" setup_vim
     run_step "Tmux setup" setup_tmux
     run_step "Git setup" setup_git
     run_step "Python setup" setup_python
